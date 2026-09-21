@@ -39,7 +39,7 @@ export const signup = async (req, res) => {
       // generateToken(newUser._id, res);
       // await newUser.save();
       
-      // persist the new user to the database
+      // persist the new user to the databases
       const savedUser = await newUser.save();
       generateToken(savedUser._id, res); // generate token after saving the user
 
