@@ -68,3 +68,35 @@ export const signup = async (req, res) => {
     res.status(500).json({ message: "Internal server error" });
   }
 };
+export const login = async (req, res) => {
+  const{email,password}=req.body;
+  try{
+    const user = await User.findOne({email});
+    if(!user){
+      return res.status(400).json({message:"Invalid credentials"});
+    }
+    const ispasswordcorrect = await brcypt.compare(password,user.password);
+    if(!ispasswordcorrect){
+      return res.status(400).json({message:"Invalid credentials"});
+    }
+    generateToken(user._id,res);
+    res.status(200).json({
+      message:"Logged in successfully",
+      user:{
+        _id:user._id,
+        username:user.username,
+        email:user.email,
+        profilepic:user.profilepic
+      }
+    });
+  }
+  catch(error){
+    console.log("Error while logging in",error);
+    res.status(500).json({message:"Internal server error"});
+  }
+}
+
+export const logout = async (_, res) => {
+  res.cookie("jwt", "", {maxAge: 0});
+  res.status(200).json({message:"Logged out successfully"});
+}
