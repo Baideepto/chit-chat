@@ -1,8 +1,9 @@
 import User from "../models/User.js";
-import brcypt from "bcryptjs";
+import bcrypt from "bcryptjs";
 import { generateToken } from "../lib/utils.js";
 import { env } from "../lib/env.js";
 import { sendWelcomeEmail } from "../emails/emailHandlers.js";
+import cloudinary from "../lib/cloudinary.js";
 export const signup = async (req, res) => {
   const { username, email, password } = req.body;
   try {
@@ -30,8 +31,8 @@ export const signup = async (req, res) => {
     if (userExists) {
       return res.status(400).json({ message: "User already exists" });
     }
-    const salt = await brcypt.genSalt(10);
-    const hashedPassword = await brcypt.hash(password, salt);
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
     const newUser = new User({
       username,
       email,
@@ -78,7 +79,7 @@ export const login = async (req, res) => {
     if(!user){
       return res.status(400).json({message:"Invalid credentials"});
     }
-    const ispasswordcorrect = await brcypt.compare(password,user.password);
+    const ispasswordcorrect = await bcrypt.compare(password,user.password);
     if(!ispasswordcorrect){
       return res.status(400).json({message:"Invalid credentials"});
     }
@@ -102,4 +103,27 @@ export const login = async (req, res) => {
 export const logout = async (_, res) => {
   res.cookie("jwt", "", {maxAge: 0});
   res.status(200).json({message:"Logged out successfully"});
+}
+export const updateProfile = async (req, res) => {
+  try{
+    const {profilepic} = req.body;
+    if(!profilepic){
+      return res.status(400).json({message:"Profile picture is required"});
+    }
+    const user = req.user._id;
+    const uploadResponse = await cloudinary.uploader.upload(profilepic);
+    const updatedUser = await User.findByIdAndUpdate(
+      user,
+      {profilepic:uploadResponse.secure_url},
+      {new:true}
+    );
+    if(!updatedUser){
+      return res.status(404).json({message:"User not found"});
+    }
+    res.status(200).json({updatedUser, message:"Profile updated successfully"});
+  }
+  catch(error){
+    console.log("Error while updating profile",error);
+    res.status(500).json({message:"Internal server error"});
+  }
 }
