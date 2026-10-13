@@ -1,55 +1,65 @@
-import { Routes, Route } from "react-router";
+import { Routes, Route, Navigate } from "react-router";
 import Chatpage from "./pages/Chatpage";
 import LoginPage from "./pages/LoginPage";
 import SignUpPage from "./pages/SignUpPage";
-import { useState } from "react";
+import { useEffect } from "react";
 import { useAuthStore } from "./store/useAuthStore.js";
+import PageLoader from "./components/PageLoader.jsx";
+import { Toaster } from "react-hot-toast";
 
 function App() {
-  const { authUser, login, isLoggedIn } = useAuthStore();
-  console.log("Auth User:", authUser);
-  console.log("Is Logged In:", isLoggedIn);
+  const { checkAuth, isCheckingAuth, authUser } = useAuthStore();
+
+  useEffect(() => {
+    checkAuth();
+  }, [checkAuth]);
+
+  if (isCheckingAuth) return <PageLoader />; // Show a loading indicator while checking auth
 
   return (
-    <div className="min-h-screen bg-slate-950 relative flex items-center justify-center p-4 overflow-hidden ">
+    <div className="min-h-screen flex items-center justify-center bg-slate-800 text-white p-4 relative overflow-hidden">
+      <div 
+        className="absolute inset-0 opacity-[0.18] pointer-events-none z-0" 
+        style={{
+          backgroundImage: `
+            linear-gradient(rgba(56, 189, 248, 0.25) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(56, 189, 248, 0.25) 1px, transparent 1px),
+            linear-gradient(rgba(56, 189, 248, 0.08) 0.5px, transparent 0.5px),
+            linear-gradient(90deg, rgba(56, 189, 248, 0.08) 0.5px, transparent 0.5px)
+          `,
+          backgroundSize: '40px 40px, 40px 40px, 8px 8px, 8px 8px',
+          backgroundPosition: 'center center'
+        }}
+      />
+
+      {/* Smooth Radial Masking to keep lighting localized */}
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_10%,#0b0f19_75%)] pointer-events-none z-0" />
+
+      {/* Vibrant Cosmic Glow Overlays */}
+      {/* Center Core Radiance */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w:550px h:550px rounded-full bg-gradient-to-r from-sky-500/10 to-indigo-500/10 blur-[130px] pointer-events-none z-0" />
       
-      {/* ....page_design....... */}
-      <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
-        {/* Dynamic Glowing Ambient Orbs */}
-        <div className="absolute top-[-10%] left-[-10%] w-[50vw] h-[50vw] rounded-full bg-indigo-500/10 blur-[120px] animate-pulse" />
-        <div className="absolute bottom-[-10%] right-[-10%] w-[50vw] h-[50vw] rounded-full bg-purple-500/10 blur-[120px] animate-pulse [animation-delay:2s]" />
-        
-        {/* Futuristic Subtle Perspective Grid */}
-        <div 
-          className="absolute inset-0 opacity-[0.15]" 
-          style={{
-            backgroundImage: `
-              linear-gradient(to right, #4f46e5 1px, transparent 1px),
-              linear-gradient(to bottom, #4f46e5 1px, transparent 1px)
-            `,
-            backgroundSize: '40px 40px',
-            maskImage: 'radial-gradient(ellipse at center, black, transparent 80%)',
-            WebkitMaskImage: 'radial-gradient(ellipse at center, black, transparent 80%)'
-          }}
+      {/* Top Right Cyan Light Field */}
+      <div className="absolute -top-[15%] -right-[10%] w-[450px] h-[450px] rounded-full bg-cyan-500/20 blur-[110px] animate-pulse pointer-events-none z-0" />
+      
+      {/* Bottom Left Fuchsia Flare */}
+      <div className="absolute -bottom-[15%] -left-[10%] w-[500px] h-[500px] rounded-full bg-fuchsia-600/15 blur-[130px] pointer-events-none z-0" />
+      <div className="relative z-10 w-full max-w-6xl flex justify-center items-center">
+      <Routes>
+        <Route
+          path="/"
+          element={authUser ? <Chatpage /> : <Navigate to={"/login"} />}
         />
-
-        {/* Diagonal Light Streaks */}
-        <div className="absolute inset-0 bg-linear-to-tr from-transparent via-indigo-500/5 to-transparent skew-y-12 scale-150 transform-gpu" />
-      </div>
-
-      <button
-        onClick={login}
-        className="bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-blue-500 z-10 shadow-lg shadow-indigo-600/30 transition-all"
-      >
-        Login
-      </button>
-
-      <div className="z-10 w-full max-w-6xl">
-        <Routes>
-          <Route path="/" element={<Chatpage />} />
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/signup" element={<SignUpPage />} />
-        </Routes>
+        <Route
+          path="/login"
+          element={!authUser ? <LoginPage /> : <Navigate to={"/"} />}
+        />
+        <Route
+          path="/signup"
+          element={!authUser ? <SignUpPage /> : <Navigate to={"/"} />}
+        />
+      </Routes>
+      <Toaster />
       </div>
     </div>
   );

@@ -22,6 +22,7 @@ export const arcjectProtection = async (req, res, next) => {
     next();
   } catch (error) {
     console.error("Error in Arcjet middleware:", error);
+    return res.status(503).json({message:"Request Protection is temporarily unavailable"});
     next();
   }
 };

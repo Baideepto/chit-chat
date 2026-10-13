@@ -118,7 +118,7 @@ export const updateProfile = async (req, res) => {
       user,
       { profilepic: uploadResponse.secure_url },
       { new: true },
-    ).select("-password");// Exclude password from the response
+    ).select("-password"); // Exclude password from the response
     if (!updatedUser) {
       return res.status(404).json({ message: "User not found" });
     }
