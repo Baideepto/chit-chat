@@ -107,7 +107,7 @@ const SignUpPage = ()=>{
             </div>
             <div className="hidden md:w-1/2 md:flex items-center justify-center p-6 bg-gradiet-to-bl from-slate-800/20 to-transparent">
             <div>
-              <img src="/Tom_and_Jerry.png" alt="Tom and jerry are chatting" className="w-full h-400px object-contain" />
+              <img src="/Tom_and_Jerry_signup_image.png" alt="Tom and jerry are chatting" className="w-full h-400px object-contain" />
               <div className="mt-6 text-center">
                 <h3 className="text-xl font-medium text-cyan-400"> Start Your Journey Today With Our Chatting Community</h3>
                 <div className="mt-4 flex justify-center gap-4">
