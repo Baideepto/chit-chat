@@ -1,122 +1,68 @@
-import { useState } from 'react'
-import heroImg from './assets/hero.png'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import './App.css'
+import { Routes, Route, Navigate } from "react-router";
+import Chatpage from "./pages/Chatpage";
+import LoginPage from "./pages/LoginPage";
+import SignUpPage from "./pages/SignUpPage";
+import { useEffect } from "react";
+import { useAuthStore } from "./store/useAuthStore.js";
+import PageLoader from "./components/PageLoader.jsx";
+import { Toaster } from "react-hot-toast";
 
 function App() {
-  const [count, setCount] = useState(0)
+  const { checkAuth, isCheckingAuth, authUser } = useAuthStore();
+
+  useEffect(() => {
+    checkAuth();
+  }, [checkAuth]);
+
+  if (isCheckingAuth) return <PageLoader />; // Show a loading indicator while checking auth
 
   return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.jsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
+    <div className="min-h-screen flex items-center justify-center bg-slate-800 text-white p-4 relative overflow-hidden">
+      <div 
+        className="absolute inset-0 opacity-[0.18] pointer-events-none z-0" 
+        style={{
+          backgroundImage: `
+            linear-gradient(rgba(56, 189, 248, 0.25) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(56, 189, 248, 0.25) 1px, transparent 1px),
+            linear-gradient(rgba(56, 189, 248, 0.08) 0.5px, transparent 0.5px),
+            linear-gradient(90deg, rgba(56, 189, 248, 0.08) 0.5px, transparent 0.5px)
+          `,
+          backgroundSize: '40px 40px, 40px 40px, 8px 8px, 8px 8px',
+          backgroundPosition: 'center center'
+        }}
+      />
 
-      <div className="ticks"></div>
+      {/* Smooth Radial Masking to keep lighting localized */}
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_10%,#0b0f19_75%)] pointer-events-none z-0" />
 
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
-
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
-  )
+      {/* Vibrant Cosmic Glow Overlays */}
+      {/* Center Core Radiance */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w:550px h:550px rounded-full bg-gradient-to-r from-sky-500/10 to-indigo-500/10 blur-[130px] pointer-events-none z-0" />
+      
+      {/* Top Right Cyan Light Field */}
+      <div className="absolute -top-[15%] -right-[10%] w-[450px] h-[450px] rounded-full bg-cyan-500/20 blur-[110px] animate-pulse pointer-events-none z-0" />
+      
+      {/* Bottom Left Fuchsia Flare */}
+      <div className="absolute -bottom-[15%] -left-[10%] w-[500px] h-[500px] rounded-full bg-fuchsia-600/15 blur-[130px] pointer-events-none z-0" />
+      <div className="relative z-10 w-full max-w-6xl flex justify-center items-center">
+      <Routes>
+        <Route
+          path="/"
+          element={authUser ? <Chatpage /> : <Navigate to={"/login"} />}
+        />
+        <Route
+          path="/login"
+          element={!authUser ? <LoginPage /> : <Navigate to={"/"} />}
+        />
+        <Route
+          path="/signup"
+          element={!authUser ? <SignUpPage /> : <Navigate to={"/"} />}
+        />
+      </Routes>
+      <Toaster />
+      </div>
+    </div>
+  );
 }
 
-export default App
+export default App;
