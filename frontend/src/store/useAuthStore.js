@@ -1,17 +1,18 @@
 import { create } from "zustand";
 import { axiosInstance } from "../lib/axios.js";
-import  toast  from "react-hot-toast";
+import toast from "react-hot-toast";
 
 export const useAuthStore = create((set) => ({
   authUser: null,
   isCheckingAuth: true,
-  isSigningUp:false,
-  isLoggingIn:false,
+  isSigningUp: false,
+  isLoggingIn: false,
+  isUpdatingProfile: false,
 
   checkAuth: async () => {
     try {
       const res = await axiosInstance.get("/auth/check-auth");
-      set({ authUser: res.data });
+      set({ authUser: res.data.user});
     } catch (error) {
       console.error("Error checking auth:", error);
       set({ authUser: null });
@@ -23,7 +24,7 @@ export const useAuthStore = create((set) => ({
     set({ isSigningUp: true });
     try {
       const res = await axiosInstance.post("/auth/signup", data);
-      set({ authUser: res.data });
+      set({ authUser: res.data.user });
       toast.success("Signed up successfully!");
     } catch (error) {
       // console.error("Error signing up:", error);
@@ -37,7 +38,7 @@ export const useAuthStore = create((set) => ({
     set({ isLoggingIn: true });
     try {
       const res = await axiosInstance.post("/auth/login", data);
-      set({ authUser: res.data });
+      set({ authUser: res.data.user });
       toast.success("logged in successfully!");
     } catch (error) {
       toast.error(error.response.data.message);
@@ -46,14 +47,26 @@ export const useAuthStore = create((set) => ({
     }
   },
   logout: async () => {
-    try{
+    try {
       await axiosInstance.post("/auth/logout");
-      set({authUser: null});
+      set({ authUser: null });
       toast.success("logged out successfully");
-    }
-    catch(error){
+    } catch (error) {
       toast.error("Error logging out");
-      console.log("Logged out unsuccessful:",error);
+      console.log("Logged out unsuccessful:", error);
+    }
+  },
+  updateProfile: async (data) => {
+    set({ isUpdatingProfile: true });
+    try {
+      const res = await axiosInstance.put("/auth/update-profile", data);
+      set({ authUser: res.data.user});
+      toast.success("Profile updated successfully");
+    } catch (error) {
+      console.log("Error in updating the profile", error);
+      toast.error(error.response.data.message);
+    } finally {
+      set({ isUpdatingProfile: false });
     }
   },
 }));
