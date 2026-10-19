@@ -8,8 +8,10 @@ import NoConversationPlaceholder from "../components/NoConversationPlaceholder";
 import ProfileHeader from "../components/ProfileHeader";
 import { useChatStore } from "../store/useChatStore"
 
-function Chatpage() {
+const Chatpage=() =>{
   const {activeTab,selectedUser} = useChatStore();
+  console.log(selectedUser);
+
   return(
     <div className="relative w-full max-w-6xl h-[800px]">
       <BorderAnimatedContainer>
@@ -23,8 +25,7 @@ function Chatpage() {
         </div>
         {/*Right side */}
         <div className="flex-1 flex flex-col bg-slate-900/50 backdrop-blur-sm">
-          {selectedUser ? <ChatContainer/> : <NoConversationPlaceholder/>}
-
+          {selectedUser ? <ChatContainer /> : <NoConversationPlaceholder />}
         </div>
       </BorderAnimatedContainer>
     </div>
