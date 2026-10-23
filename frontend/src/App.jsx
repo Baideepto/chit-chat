@@ -17,9 +17,10 @@ function App() {
   if (isCheckingAuth) return <PageLoader />; // Show a loading indicator while checking auth
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-slate-800 text-white p-4 relative overflow-hidden">
-      <div 
-        className="absolute inset-0 opacity-[0.18] pointer-events-none z-0" 
+    // <div className="h-dvh flex items-center justify-center bg-slate-800 text-white p-4 relative overflow-hidden">
+    <div className="h-dvh w-full box-border flex items-center justify-center bg-slate-800 text-white p-1 sm:p-4 relative overflow-hidden">
+      <div
+        className="absolute inset-0 opacity-[0.18] pointer-events-none z-0"
         style={{
           backgroundImage: `
             linear-gradient(rgba(56, 189, 248, 0.25) 1px, transparent 1px),
@@ -27,8 +28,8 @@ function App() {
             linear-gradient(rgba(56, 189, 248, 0.08) 0.5px, transparent 0.5px),
             linear-gradient(90deg, rgba(56, 189, 248, 0.08) 0.5px, transparent 0.5px)
           `,
-          backgroundSize: '40px 40px, 40px 40px, 8px 8px, 8px 8px',
-          backgroundPosition: 'center center'
+          backgroundSize: "40px 40px, 40px 40px, 8px 8px, 8px 8px",
+          backgroundPosition: "center center",
         }}
       />
 
@@ -38,28 +39,29 @@ function App() {
       {/* Vibrant Cosmic Glow Overlays */}
       {/* Center Core Radiance */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w:550px h:550px rounded-full bg-gradient-to-r from-sky-500/10 to-indigo-500/10 blur-[130px] pointer-events-none z-0" />
-      
+
       {/* Top Right Cyan Light Field */}
       <div className="absolute -top-[15%] -right-[10%] w-[450px] h-[450px] rounded-full bg-cyan-500/20 blur-[110px] animate-pulse pointer-events-none z-0" />
-      
+
       {/* Bottom Left Fuchsia Flare */}
       <div className="absolute -bottom-[15%] -left-[10%] w-[500px] h-[500px] rounded-full bg-fuchsia-600/15 blur-[130px] pointer-events-none z-0" />
+
       <div className="relative z-10 w-full max-w-6xl flex justify-center items-center">
-      <Routes>
-        <Route
-          path="/"
-          element={authUser ? <Chatpage /> : <Navigate to={"/login"} />}
-        />
-        <Route
-          path="/login"
-          element={!authUser ? <LoginPage /> : <Navigate to={"/"} />}
-        />
-        <Route
-          path="/signup"
-          element={!authUser ? <SignUpPage /> : <Navigate to={"/"} />}
-        />
-      </Routes>
-      <Toaster />
+        <Routes>
+          <Route
+            path="/"
+            element={authUser ? <Chatpage /> : <Navigate to={"/login"} />}
+          />
+          <Route
+            path="/login"
+            element={!authUser ? <LoginPage /> : <Navigate to={"/"} />}
+          />
+          <Route
+            path="/signup"
+            element={!authUser ? <SignUpPage /> : <Navigate to={"/"} />}
+          />
+        </Routes>
+        <Toaster />
       </div>
     </div>
   );

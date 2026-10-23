@@ -22,7 +22,10 @@ const LoginPage = () => {
     <div className="w-full flex items-center justify-center bg-slate-900 text-white p-4">
       <BorderAnimatedContainer>
         {/* <div className=" w-full max-w-4xl md:h-[650px] h-auto overflow-hidden bg-slate-900 rounded-xl"> */}
-        <div className="flex w-full flex-col md:flex-row p-6">
+
+       <div className="flex w-full max-h-full flex-col md:flex-row p-4 md:p-6">
+
+        {/* <div className="flex w-full max-w-6xl flex-col md:flex-row p-6"> */}
           <div className="w-full flex flex-col md:flex-row">
             {/* Left Side (Form): Added md:flex-1 to ensure it takes up exactly 50% width */}
             <div className="md:w-1/2 p-8 flex justify-center items-center md:border-r border-slate-600/30">
@@ -93,7 +96,7 @@ const LoginPage = () => {
                 <img
                   src="/Tom_and_Jerry.png"
                   alt="Tom and jerry are chatting"
-                  className="w-full h-400px object-contain"
+                  className="w-full max-h-[55dvh] object-contain"
                 />
                 <div className="mt-6 text-center">
                   <h3 className="text-xl font-medium text-cyan-400">

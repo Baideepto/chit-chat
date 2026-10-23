@@ -13,19 +13,26 @@ const Chatpage=() =>{
   console.log(selectedUser);
 
   return(
-    <div className="relative w-full max-w-6xl h-[800px]">
+    
+    <div className="w-full h-dvh box-border overflow-hidden flex items-center justify-center bg-slate-900 text-white p-1 sm:p-2">
       <BorderAnimatedContainer>
+        {/* <div className="flex w-full h-full min-h-0 flex-col overflow-hidden md:flex-row"> */}
+        <div className="flex w-full h-full min-h-0 min-w-0 overflow-hidden">
+
         {/*Left side */}
-        <div className="w-80 bg-slate-800/50 backdrop-blur-sm flex flex-col">
+        {/* <div className="w-80 bg-slate-800/50 backdrop-blur-sm flex flex-col"> */}
+        <div className={`w-80 md:w-80 shrink-0 min-h-0 bg-slate-800/50 backdrop-blur-sm flex flex-col ${selectedUser ? "hidden md:flex" : "flex"}`}>
           <ProfileHeader/>
           <ActiveTabSwitch/>
-          <div className="flex-1 overflow-y-auto p-4 space-y-2">
+          <div className="flex-1 overflow-y-auto p-4 space-y-2 min-h-0">
             {activeTab ==="chats" ? <ChatList/> : <ContactList/>}
           </div>
         </div>
         {/*Right side */}
-        <div className="flex-1 flex flex-col bg-slate-900/50 backdrop-blur-sm">
+        <div className="flex-1 min-h-0 min-w-0 flex flex-col bg-slate-900 backdrop-blur-sm overflow-hidden ">
+          {/* <div className={`flex-1 flex flex-col bg-slate-900 backdrop-blur-sm ${selectedUser ? "md:"}`}></div> */}
           {selectedUser ? <ChatContainer /> : <NoConversationPlaceholder />}
+        </div>
         </div>
       </BorderAnimatedContainer>
     </div>
