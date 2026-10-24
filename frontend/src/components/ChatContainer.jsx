@@ -12,8 +12,6 @@ function ChatContainer() {
     getMessageByUserId,
     messages,
     isMessagesLoading,
-    subscribeToMessages,
-    unsubscribeFromMessages,
   } = useChatStore();
   const { authUser } = useAuthStore();
 

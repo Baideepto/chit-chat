@@ -22,6 +22,7 @@ export const useAuthStore = create((set, get) => ({
       get().connectSocket();
     } catch (error) {
       console.error("Error checking auth:", error);
+      get().disconnectSocket();
       set({ authUser: null });
     } finally {
       set({ isCheckingAuth: false });
@@ -79,21 +80,48 @@ export const useAuthStore = create((set, get) => ({
       set({ isUpdatingProfile: false });
     }
   },
+
   connectSocket: () => {
-    const { authUser } = get();
-    if (!authUser || get().socket?.connected) return;
+    const { authUser, socket: existingSocket } = get();
+
+    if (!authUser || existingSocket) return;
 
     const socket = io(BASE_URL, {
-      withCredentials: true,//ensure cookies are sent with the connection
+      withCredentials: true,
+      autoConnect: false,
     });
-    socket.connect();
 
     set({ socket });
+
+    socket.on("connect", () => {
+      console.log("Socket connected:", socket.id);
+    });
+
+    socket.on("connect_error", (error) => {
+      console.error("Socket connection error:", error.message);
+    });
+
+    socket.on("disconnect", (reason) => {
+      console.log("Socket disconnected:", reason);
+    });
+
     socket.on("getOnlineUsers", (userIds) => {
       set({ onlineUsers: userIds });
     });
+
+    socket.connect();
   },
-  disconnectSocket:()=>{
-    if(get().socket?.connected) get().socket.disconnect();
+
+  disconnectSocket: () => {
+    const { socket } = get();
+
+    if (socket) {
+      socket.disconnect();
+    }
+
+    set({
+      socket: null,
+      onlineUsers: [],
+    });
   },
 }));
