@@ -4,9 +4,9 @@ import UsersLoadingSkeleton from "./UsersLoadingSkeleton";
 import { useAuthStore } from "../store/useAuthStore.js";
 
 function ContactList() {
-  const { getAllContacts, allContacts, setSelectedUser, isUsersLoading } =
+  const { getAllContacts, allContacts, setSelectedUser, isUsersLoading, unreadMessages } =
     useChatStore();
-  const {onlineUsers} = useAuthStore();
+  const { onlineUsers } = useAuthStore();
   useEffect(() => {
     getAllContacts();
   }, [getAllContacts]);
@@ -22,7 +22,9 @@ function ContactList() {
           onClick={() => setSelectedUser(contact)}
         >
           <div className="flex items-center gap-3">
-            <div className={`avatar ${onlineUsers.includes(contact._id)?"avatar-online":"avatar-offline"}`}>
+            <div
+              className={`avatar ${onlineUsers.includes(contact._id) ? "avatar-online" : "avatar-offline"}`}
+            >
               <div className="size-12 rounded-full">
                 <img
                   src={contact.profilepic || "/avatar.png"}
@@ -30,9 +32,17 @@ function ContactList() {
                 />
               </div>
             </div>
-            <h4 className="text-slate-200 font-medium truncate">
-              {contact.username}
-            </h4>
+            <div className="flex items-center gap-2 min-w-0 flex-1">
+              <h4 className="text-slate-200 font-medium truncate">
+                {contact.username}
+              </h4>
+
+              {unreadMessages[contact._id] > 0 && (
+                <span className="shrink-0 rounded-full bg-cyan-500 text-white text-xs min-w-5 h-5 px-1 flex items-center justify-center">
+                  {unreadMessages[contact._id]}
+                </span>
+              )}
+            </div>
           </div>
         </div>
       ))}

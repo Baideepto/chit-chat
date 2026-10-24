@@ -7,19 +7,29 @@ import MessagesLoadingSkeleton from "./MessagesLoadingSkeleton";
 import MessageInput from "./MessageInput";
 
 function ChatContainer() {
-  const { selectedUser, getMessageByUserId, messages, isMessagesLoading } =
-    useChatStore();
+  const {
+    selectedUser,
+    getMessageByUserId,
+    messages,
+    isMessagesLoading,
+    subscribeToMessages,
+    unsubscribeFromMessages,
+  } = useChatStore();
   const { authUser } = useAuthStore();
 
   const messageEndRef = useRef(null);
 
-  useEffect(()=>{
-    if(messageEndRef.current){
-      messageEndRef.current.scrollIntoView({behavior: "smooth", block: "end"});
+  useEffect(() => {
+    if (messageEndRef.current) {
+      messageEndRef.current.scrollIntoView({
+        behavior: "smooth",
+        block: "end",
+      });
     }
-  },[messages]);
+  }, [messages]);
 
   useEffect(() => {
+    if (!selectedUser) return;
     getMessageByUserId(selectedUser._id);
   }, [selectedUser, getMessageByUserId]);
   return (
@@ -49,20 +59,23 @@ function ChatContainer() {
                   )}
                   {msg.text && <p className="mt-2">{msg.text}</p>}
                   <p className="text-xs mt-1 opacity-75 flex items-center gap-1">
-                    {new Date(msg.createdAt).toLocaleTimeString([],{hour:"2-digit", minute:"2-digit",})}
+                    {new Date(msg.createdAt).toLocaleTimeString([], {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    })}
                   </p>
                 </div>
               </div>
             ))}
-            <div ref={messageEndRef}/>
+            <div ref={messageEndRef} />
           </div>
         ) : isMessagesLoading ? (
-          <MessagesLoadingSkeleton/>
+          <MessagesLoadingSkeleton />
         ) : (
           <NoChatHistoryPlaceholder name={selectedUser.username} />
         )}
       </div>
-      <MessageInput/>
+      <MessageInput />
     </>
   );
 }
