@@ -1,5 +1,5 @@
 import ActiveTabSwitch from "../components/ActiveTabSwitch";
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import BorderAnimatedContainer from "../components/BorderAnimatedContainer";
 import ChatContainer from "../components/ChatContainer";
 import ChatList from "../components/ChatList";
@@ -12,22 +12,29 @@ import { useAuthStore } from "../store/useAuthStore";
 const Chatpage = () => {
   const { activeTab, selectedUser } = useChatStore();
 
-  const { socket, authUser, connectSocket } = useAuthStore();
+  const { socket } = useAuthStore();
   const { subscribeToMessages, unsubscribeFromMessages } = useChatStore();
 
-  useEffect(() => {
-    if (!authUser) return;
+ 
+useEffect(() => {
+  if (!socket) return;
 
-    connectSocket();
-  }, [authUser, connectSocket]);
-
-  useEffect(() => {
-    if (!socket?.connected) return;
-
+  const subscribe = () => {
     subscribeToMessages();
+  };
 
-    return () => unsubscribeFromMessages();
-  }, [socket, socket?.connected, subscribeToMessages, unsubscribeFromMessages]);
+  if (socket.connected) {
+    subscribe();
+  }
+
+  socket.on("connect", subscribe);
+
+  return () => {
+    socket.off("connect", subscribe);
+    unsubscribeFromMessages();
+  };
+}, [socket, subscribeToMessages, unsubscribeFromMessages]);
+
 
   return (
     <div className="w-full h-dvh box-border overflow-hidden flex items-center justify-center bg-slate-900 text-white p-1 sm:p-2">

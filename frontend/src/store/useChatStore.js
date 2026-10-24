@@ -102,24 +102,77 @@ export const useChatStore = create((set, get) => ({
       set({ isMessageSending: false });
     }
   },
+  // subscribeToMessages: () => {
+  //   const socket = useAuthStore.getState().socket;
+
+  //   if (!socket) return;
+
+  //   socket.off("newMessage");
+
+  //   socket.on("newMessage", (newMessage) => {
+  //     const senderId = String(newMessage.senderId?._id ?? newMessage.senderId);
+
+  //     const currentSelectedUserId = String(get().selectedUser?._id ?? "");
+
+  //     const isFromSelectedUser = senderId === currentSelectedUserId;
+
+  //     if (isFromSelectedUser) {
+  //       set((state) => ({
+  //         messages: [...state.messages, newMessage],
+  //       }));
+  //     } else {
+  //       set((state) => ({
+  //         unreadMessages: {
+  //           ...state.unreadMessages,
+  //           [senderId]: (state.unreadMessages[senderId] || 0) + 1,
+  //         },
+  //       }));
+  //     }
+
+  //     if (get().isSoundEnabled) {
+  //       const notificationSound = new Audio("/sounds/notification.mp3");
+  //       notificationSound
+  //         .play()
+  //         .catch((error) => console.log("Audio play failed", error));
+  //     }
+  //   });
+  // },
+
   subscribeToMessages: () => {
     const socket = useAuthStore.getState().socket;
 
-    if (!socket) return;
+    if (!socket) {
+      console.warn("Cannot subscribe: socket is not initialized");
+      return;
+    }
 
-    socket.off("newMessage");
+    const handleNewMessage = (newMessage) => {
+      console.log("NEW MESSAGE RECEIVED:", newMessage);
 
-    socket.on("newMessage", (newMessage) => {
-      const senderId = String(newMessage.senderId?._id ?? newMessage.senderId);
+      const senderId = String(
+        newMessage.senderId?._id ?? newMessage.senderId ?? "",
+      );
 
-      const currentSelectedUserId = String(get().selectedUser?._id ?? "");
+      const selectedUserId = String(get().selectedUser?._id ?? "");
 
-      const isFromSelectedUser = senderId === currentSelectedUserId;
+      console.log("Sender ID:", senderId);
+      console.log("Selected user ID:", selectedUserId);
+      console.log("Incoming message:", newMessage);
 
-      if (isFromSelectedUser) {
-        set((state) => ({
-          messages: [...state.messages, newMessage],
-        }));
+      if (!senderId) return;
+
+      if (senderId === selectedUserId) {
+        set((state) => {
+          const alreadyExists = state.messages.some(
+            (message) => message._id === newMessage._id,
+          );
+
+          if (alreadyExists) return state;
+
+          return {
+            messages: [...state.messages, newMessage],
+          };
+        });
       } else {
         set((state) => ({
           unreadMessages: {
@@ -131,14 +184,26 @@ export const useChatStore = create((set, get) => ({
 
       if (get().isSoundEnabled) {
         const notificationSound = new Audio("/sounds/notification.mp3");
-        notificationSound
-          .play()
-          .catch((error) => console.log("Audio play failed", error));
+
+        notificationSound.play().catch((error) => {
+          console.warn("Notification sound could not play:", error);
+        });
       }
-    });
+    };
+
+    socket.off("newMessage");
+    socket.on("newMessage", handleNewMessage);
   },
+
+  // unsubscribeFromMessages: () => {
+  //   const socket = useAuthStore.getState().socket;
+  //   socket.off("newMessage");
+  // },
   unsubscribeFromMessages: () => {
     const socket = useAuthStore.getState().socket;
-    socket.off("newMessage");
+
+    if (socket) {
+      socket.off("newMessage");
+    }
   },
 }));
